@@ -1,0 +1,55 @@
+#
+# For a description of the syntax of this configuration file,
+# see the file kconfig-language.txt in the NuttX tools repository.
+#
+
+config SYSTEM_CRTOS_DAEMON
+	bool "cRTOS Loading Daemon"
+	default n
+
+	select NET 
+	select NET_TCP
+	select NET_TCPBACKLOG
+	select NET_ARP_IPIN 
+	select NET_ARP_SEND
+	select NETUTILS_NETLIB
+
+	depends on !DISABLE_SIGNALS && !DISABLE_PTHREAD && \
+							SCHED_HAVE_PARENT && SCHED_CHILD_STATUS && \
+							SCHED_WAITPID && !SCHED_USER_IDENTITY && \
+							SCHED_EXIT_KILL_CHILDREN && !SCHED_USER_IDENTITY && \
+							!FDCLONE_DISABLE && !FDCLONE_STDIO && \
+							!SDCLONE_DISABLE && SIG_DEFAULT && \
+							SIG_SIGKILL_ACTION && SIG_SIGSTOP_ACTION && \
+							SIG_SIGPIPE_ACTION && LIB_SYSCALL
+							
+	---help---
+		Enable the daemon for loading Linux binaries
+
+if SYSTEM_CRTOS_DAEMON
+
+config SYSTEM_CRTOS_DAEMON_NIC
+	string "System NIC name"
+	default "eth0"
+
+config SYSTEM_CRTOS_DAEMON_IPADDR
+	hex "System IP address"
+	default 0xac100002
+
+config SYSTEM_CRTOS_DAEMON_NETMASK
+	hex "System netmask"
+	default 0xffffff00
+  
+config SYSTEM_CRTOS_DAEMON_DRIPADDR
+	hex "System gateway IP address"
+	default 0xac100001
+
+config SYSTEM_CRTOS_DAEMON_PORT
+	int "Which port the daemon will listen to"
+	default 42
+
+config SYSTEM_CRTOS_DAEMON_BACKLOG
+	int "Number of listening backlog"
+	default 8
+
+endif # SYSTEM_CRTOS_DAEMON
